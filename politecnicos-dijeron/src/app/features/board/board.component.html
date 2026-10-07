@@ -1,0 +1,139 @@
+<main class="screen">
+  <!-- Escenario 16:9 que escala con la ventana -->
+  <section class="stage">
+    <div class="game">
+      <div class="yellow-left"></div>
+      <div class="yellow-right"></div>
+
+      <!-- Arco central con focos -->
+      <svg class="arch" [attr.viewBox]="archViewBox" preserveAspectRatio="none" aria-hidden="true">
+        <path class="arch-shadow" [attr.d]="archOuter" />
+        <path class="arch-glow" [attr.d]="archOuter" />
+        <path class="arch-gold" [attr.d]="archOuter" />
+        <path class="arch-sheen" [attr.d]="archOuter" />
+        <path class="arch-inner" [attr.d]="archInner" />
+
+        @for (bulb of bulbs; track $index) {
+          <g class="bulb" [style.--i]="$index">
+            <circle class="halo-outer" [attr.cx]="bulb.x" [attr.cy]="bulb.y" r="30" />
+            <circle class="halo-inner" [attr.cx]="bulb.x" [attr.cy]="bulb.y" r="19" />
+            <circle class="bulb-core" [attr.cx]="bulb.x" [attr.cy]="bulb.y" r="11" />
+          </g>
+        }
+      </svg>
+
+      <!-- Logotipo original -->
+      <img class="logo" src="assets/images/logo.png" alt="100 Politécnicos Dicen" />
+
+      <!-- Equipos A (izquierda) y B (derecha) -->
+      @for (team of teams; track team.id; let first = $first) {
+        <div class="side" [class.left]="first" [class.right]="!first">
+          <div class="team-title">{{ game.teamName(team.id) }}</div>
+          <div class="score">{{ game.state().scores[team.id] }}</div>
+        </div>
+      }
+
+      <!-- Ronda -->
+      <div class="round">
+        <div class="small-label">RONDA</div>
+        <div class="round-number">{{ game.questionNumber() }}</div>
+      </div>
+
+      <!-- Timer -->
+      <div class="timer" [class.critical]="timerCritical()">
+        <div class="small-label">TIMER</div>
+        <div class="timer-value">{{ game.state().timerSeconds }}</div>
+      </div>
+
+      <!-- Strikes -->
+      <div class="strikes" [class.maxed]="game.strikesMaxed()">
+        <div class="small-label">
+          {{ game.strikesMaxed() ? '¡' + maxStrikes + ' STRIKES!' : 'STRIKES' }}
+        </div>
+        <div class="strike-marks">
+          @for (slot of strikeSlots; track slot) {
+            <span class="mark" [class.on]="slot < game.state().strikes">X</span>
+          }
+        </div>
+      </div>
+
+      <!-- Mini logo -->
+      <div class="mini-logo">
+        <img src="assets/images/logo.png" alt="" />
+      </div>
+
+      <!-- Tablero -->
+      <div class="board-frame">
+        <div class="board" [style.--rows]="slots().length">
+          @for (slot of slots(); track $index) {
+            <div class="slot">
+              @if (slot) {
+                <div class="flip" [class.revealed]="game.isRevealed($index)">
+                  <!-- Cara oculta: solo el número -->
+                  <div class="answer face">
+                    <div class="answer-number">
+                      <div class="number-circle">{{ $index + 1 }}</div>
+                    </div>
+                    <div class="answer-text"></div>
+                    <div class="answer-points"></div>
+                  </div>
+                  <!-- Cara revelada: número + texto + puntos -->
+                  <div class="answer face back">
+                    <div class="answer-number">
+                      <div class="number-circle">{{ $index + 1 }}</div>
+                    </div>
+                    <div class="answer-text">{{ slot.texto }}</div>
+                    <div class="answer-points">{{ slot.puntos }}</div>
+                  </div>
+                </div>
+              } @else {
+                <div class="answer ghost"></div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Total de la ronda -->
+      <div class="total">
+        <div class="total-label">TOTAL</div>
+        <div class="total-value">{{ game.state().roundPoints }}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overlay de Strike (pantalla completa, 2 s) -->
+  @if (strikeOverlay(); as count) {
+    <div
+      class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-[3vmin] bg-red-950/85 backdrop-blur-sm"
+      role="alert"
+      aria-live="assertive"
+    >
+      <div class="flex items-center justify-center gap-[4vmin]">
+        @for (x of overlayXs(); track x) {
+          <span
+            class="animate-strike text-[34vmin] leading-none font-black text-red-600 drop-shadow-[0_0_3vmin_rgba(255,0,0,0.8)]"
+          >
+            X
+          </span>
+        }
+      </div>
+      @if (count >= maxStrikes) {
+        <p class="animate-pulse text-[7vmin] font-black tracking-widest text-white uppercase">
+          ¡{{ maxStrikes }} strikes!
+        </p>
+      }
+    </div>
+  }
+
+  <!-- Desbloqueo de audio (política de autoplay del navegador) -->
+  @if (!audio.unlocked()) {
+    <button
+      type="button"
+      class="btn fixed top-3 right-3 z-40 bg-slate-800/80 text-sm text-white hover:bg-slate-700"
+      (click)="audio.unlock()"
+    >
+      🔊 Activar sonido
+    </button>
+  }
+</main>

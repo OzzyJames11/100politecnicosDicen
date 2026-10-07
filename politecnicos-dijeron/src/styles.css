@@ -1,0 +1,18 @@
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+@theme {
+  --animate-strike: strike-pop 0.35s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+
+  @keyframes strike-pop {
+    0%   { transform: scale(0.2) rotate(-12deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+}
+
+/* Botón base reutilizable (DRY) */
+@utility btn {
+  @apply rounded-lg px-4 py-2 font-bold transition
+         focus-visible:outline-2 focus-visible:outline-offset-2
+         disabled:cursor-not-allowed disabled:opacity-40;
+}

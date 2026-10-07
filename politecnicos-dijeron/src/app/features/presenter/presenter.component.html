@@ -1,0 +1,151 @@
+<main class="min-h-screen bg-slate-900 p-6 text-slate-100">
+  <header class="mb-6 flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <p class="text-sm tracking-widest text-amber-400 uppercase">
+        Pregunta {{ game.questionNumber() }} / {{ game.totalQuestions }}
+      </p>
+      <h1 class="text-3xl font-bold">{{ game.question().pregunta }}</h1>
+    </div>
+    <a routerLink="/board" target="_blank" class="btn bg-slate-700 hover:bg-slate-600">
+      Abrir tablero ↗
+    </a>
+  </header>
+
+  <div class="grid gap-6 lg:grid-cols-[2fr_1fr]">
+    <!-- Respuestas -->
+    <section aria-label="Respuestas">
+      <ul class="space-y-2">
+        @for (answer of game.answers(); track $index) {
+          <li
+            class="flex items-center gap-4 rounded-lg border p-3"
+            [class]="game.isRevealed($index) ? 'border-emerald-500/60 bg-emerald-900/30' : 'border-slate-700 bg-slate-800'"
+          >
+            <span class="flex size-9 items-center justify-center rounded-full bg-slate-700 font-bold">
+              {{ $index + 1 }}
+            </span>
+            <span class="flex-1 text-lg font-semibold">{{ answer.texto }}</span>
+            <span class="w-14 text-right text-xl font-black text-amber-300 tabular-nums">{{ answer.puntos }}</span>
+            <button
+              type="button"
+              class="btn w-28 bg-emerald-600 hover:bg-emerald-500"
+              [disabled]="game.isRevealed($index)"
+              (click)="game.reveal($index)"
+            >
+              {{ game.isRevealed($index) ? 'Revelada' : 'Revelar' }}
+            </button>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <!-- Controles -->
+    <aside class="space-y-5">
+      <!-- Nombres de equipos -->
+      <section class="rounded-lg bg-slate-800 p-4">
+        <p class="mb-3 text-sm tracking-widest text-amber-400 uppercase">Nombres de equipos</p>
+        <div class="space-y-2">
+          @for (team of teams; track team.id) {
+            <label class="flex items-center gap-3">
+              <span class="w-20 shrink-0 font-bold">Equipo {{ team.id }}</span>
+              <input
+                type="text"
+                class="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 font-semibold text-slate-100 placeholder:text-slate-500 focus:border-amber-400 focus:outline-none"
+                [value]="game.state().teamNames[team.id]"
+                [attr.maxlength]="maxNameLength"
+                [placeholder]="team.defaultName"
+                (input)="onRename(team.id, $event)"
+              />
+            </label>
+          }
+        </div>
+      </section>
+
+      <!-- Puntos de ronda + asignación -->
+      <section class="rounded-lg bg-slate-800 p-4">
+        <p class="text-sm tracking-widest text-amber-400 uppercase">Puntos en juego</p>
+        <p class="mb-3 text-5xl font-black tabular-nums">{{ game.state().roundPoints }}</p>
+        <div class="space-y-2">
+          @for (team of teams; track team.id) {
+            <div class="flex items-center justify-between gap-3">
+              <span class="min-w-0 truncate font-bold">
+                {{ game.teamName(team.id) }}:
+                <span class="tabular-nums">{{ game.state().scores[team.id] }}</span>
+              </span>
+              <button
+                type="button"
+                class="btn max-w-44 shrink-0 truncate text-sm"
+                [class]="team.buttonClass"
+                [disabled]="game.state().roundPoints === 0"
+                (click)="game.assignPoints(team.id)"
+              >
+                Asignar a {{ game.teamName(team.id) }}
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Strikes -->
+      <section class="rounded-lg bg-slate-800 p-4">
+        <div class="mb-3 flex items-center justify-between">
+          <p class="text-sm tracking-widest text-amber-400 uppercase">Strikes</p>
+          <p class="text-2xl font-black tabular-nums" [class.text-red-400]="game.strikesMaxed()">
+            {{ game.state().strikes }} / {{ maxStrikes }}
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn w-full bg-red-600 text-lg hover:bg-red-500"
+          [disabled]="game.strikesMaxed()"
+          (click)="game.strike()"
+        >
+          ✖ Lanzar Strike
+        </button>
+      </section>
+
+      <!-- Temporizador -->
+      <section class="rounded-lg bg-slate-800 p-4">
+        <div class="mb-3 flex items-center justify-between">
+          <p class="text-sm tracking-widest text-amber-400 uppercase">Temporizador</p>
+          <p class="font-mono text-3xl font-black tabular-nums">{{ game.timerLabel() }}</p>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            class="btn bg-emerald-600 text-sm hover:bg-emerald-500"
+            [disabled]="game.state().timerRunning || game.state().timerSeconds === 0"
+            (click)="game.startTimer()"
+          >
+            Iniciar
+          </button>
+          <button
+            type="button"
+            class="btn bg-amber-600 text-sm hover:bg-amber-500"
+            [disabled]="!game.state().timerRunning"
+            (click)="game.pauseTimer()"
+          >
+            Pausar
+          </button>
+          <button type="button" class="btn bg-slate-600 text-sm hover:bg-slate-500" (click)="game.resetTimer()">
+            Reiniciar
+          </button>
+        </div>
+      </section>
+
+      <!-- Ronda -->
+      <section class="grid grid-cols-2 gap-2">
+        <button type="button" class="btn bg-slate-600 hover:bg-slate-500" (click)="game.clearBoard()">
+          Limpiar tablero
+        </button>
+        <button
+          type="button"
+          class="btn bg-indigo-600 hover:bg-indigo-500"
+          [disabled]="game.isLastQuestion()"
+          (click)="game.nextQuestion()"
+        >
+          Siguiente pregunta →
+        </button>
+      </section>
+    </aside>
+  </div>
+</main>
