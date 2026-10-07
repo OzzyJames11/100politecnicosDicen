@@ -1,0 +1,16 @@
+# Sistema operativo (macOS)
+.DS_Store
+._*
+
+# Seguridad (Variables de entorno)
+.env
+.env.*
+
+# Entornos Virtuales (Preparación para Python/FastAPI)
+venv/
+env/
+__pycache__/
+
+# IDEs (Editores de código)
+.vscode/
+.idea/
