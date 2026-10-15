@@ -105,12 +105,13 @@
 }
 
 /* ── Logotipo ──────────────────────────────────────────── */
+/* Un poco más compacto, para dar espacio a la pregunta */
 .logo {
   position: absolute;
-  top: 1.5%;
+  top: 1%;
   left: 50%;
   transform: translateX(-50%);
-  height: 31%;
+  height: 24%;
   width: auto;
   z-index: 10;
   filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.6));
@@ -177,7 +178,7 @@
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
 }
 
-.round   { left: 5%;  top: 46%; width: 11%; height: calc(105 * var(--u)); }
+.round   { left: 5%;  top: 66%; width: 11%; height: calc(105 * var(--u)); transform: translateY(-50%); }
 .timer   { right: 5%; top: 46%; width: 11%; height: calc(125 * var(--u)); }
 .strikes { right: 5%; top: 72%; width: 11%; height: calc(105 * var(--u)); }
 
@@ -264,9 +265,9 @@
 .board-frame {
   position: absolute;
   left: 25.5%;
-  top: 31%;
+  top: 36%;
   width: 48%;
-  height: 52%;
+  height: 47%;
   padding: calc(14 * var(--u));
   border-radius: calc(28 * var(--u));
   background: linear-gradient(135deg, #ffc72f 0%, #e88b00 30%, #ffc12a 55%, #c87500 100%);
@@ -279,13 +280,13 @@
 .board {
   width: 100%;
   height: 100%;
-  padding: calc(8 * var(--u)) calc(15 * var(--u));
+  padding: calc(6 * var(--u)) calc(12 * var(--u));
   border-radius: calc(14 * var(--u));
   border: calc(5 * var(--u)) solid #06163b;
   background: radial-gradient(circle at 50% 20%, #0c3472, #061c48 65%, #041331);
   display: grid;
   grid-template-rows: repeat(var(--rows, 6), minmax(0, 1fr));
-  gap: calc(8 * var(--u));
+  gap: calc(6 * var(--u));
 }
 
 .slot {
@@ -333,16 +334,17 @@
   align-items: center;
 }
 
+/* Filas más compactas */
 .number-circle {
-  width: calc(39 * var(--u));
-  height: calc(39 * var(--u));
+  width: calc(31 * var(--u));
+  height: calc(31 * var(--u));
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   background: #f6a814;
   color: #071329;
-  font-size: calc(25 * var(--u));
+  font-size: calc(20 * var(--u));
   font-weight: 900;
   border: calc(2 * var(--u)) solid var(--gold-light);
   box-shadow: inset 0 -3px 2px rgba(121, 64, 0, 0.4);
@@ -353,7 +355,7 @@
   align-items: center;
   min-width: 0;
   padding-left: calc(13 * var(--u));
-  font-size: calc(22 * var(--u));
+  font-size: calc(20 * var(--u));
   font-weight: 800;
   white-space: nowrap;
   overflow: hidden;
@@ -368,7 +370,7 @@
   justify-content: center;
   border-left: calc(3 * var(--u)) solid #d99717;
   color: #ffb524;
-  font-size: calc(32 * var(--u));
+  font-size: calc(28 * var(--u));
   font-weight: 900;
   font-variant-numeric: tabular-nums;
   text-shadow: 0 2px 3px #000;

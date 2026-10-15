@@ -25,6 +25,15 @@
       <!-- Logotipo original -->
       <img class="logo" src="assets/images/logo.png" alt="100 Politécnicos Dicen" />
 
+      <!-- Pregunta actual -->
+      <div
+        class="absolute top-[26%] left-[28%] z-[6] flex h-[9%] w-[44%] items-center justify-center rounded-[1.4cqw] border-[0.25cqw] border-amber-400 bg-slate-950/70 px-[1.5cqw] shadow-lg"
+      >
+        <p class="line-clamp-2 text-center text-[1.9cqw] leading-tight font-extrabold text-yellow-300 drop-shadow-md">
+          {{ game.question().pregunta }}
+        </p>
+      </div>
+
       <!-- Equipos A (izquierda) y B (derecha) -->
       @for (team of teams; track team.id; let first = $first) {
         <div class="side" [class.left]="first" [class.right]="!first">
@@ -33,7 +42,7 @@
         </div>
       }
 
-      <!-- Ronda -->
+      <!-- Ronda (centrada verticalmente en el carril izquierdo) -->
       <div class="round">
         <div class="small-label">RONDA</div>
         <div class="round-number">{{ game.questionNumber() }}</div>
@@ -55,11 +64,6 @@
             <span class="mark" [class.on]="slot < game.state().strikes">X</span>
           }
         </div>
-      </div>
-
-      <!-- Mini logo -->
-      <div class="mini-logo">
-        <img src="assets/images/logo.png" alt="" />
       </div>
 
       <!-- Tablero -->
@@ -102,7 +106,7 @@
     </div>
   </section>
 
-  <!-- Overlay de Strike (pantalla completa, 2 s) -->
+  <!-- Overlay de Strike (pantalla completa) -->
   @if (strikeOverlay(); as count) {
     <div
       class="fixed inset-0 z-50 flex flex-col items-center justify-center gap-[3vmin] bg-red-950/85 backdrop-blur-sm"
